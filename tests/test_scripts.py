@@ -97,3 +97,26 @@ def test_tilecheck_tells_seamless_from_seamed(tmp_path):
     assert postprocess.tilecheck(str(tmp_path / "flat.png"), str(tmp_path / "flat-2x2.png")) <= 1
     Image.linear_gradient("L").resize((64, 64)).convert("RGB").save(tmp_path / "ramp.png")
     assert postprocess.tilecheck(str(tmp_path / "ramp.png"), str(tmp_path / "ramp-2x2.png")) > 10
+
+
+def test_requests_name_the_client(monkeypatch):
+    seen = []
+
+    class Reply:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+        def read(self):
+            return json.dumps({"data": []}).encode()
+
+    def urlopen(request, timeout=None):
+        seen.append(request)
+        return Reply()
+
+    monkeypatch.setenv("GPT_IMAGE_API_KEY", "k")
+    monkeypatch.setattr(gen_asset.urllib.request, "urlopen", urlopen)
+    gen_asset.send("/images/generations", b"{}", "application/json")
+    assert seen[0].get_header("User-agent") == gen_asset.USER_AGENT

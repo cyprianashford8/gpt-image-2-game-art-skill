@@ -25,6 +25,7 @@ import uuid
 DEFAULT_BASE_URL = "https://argolink.io/v1"
 MODELS = ("gpt-image-2", "gpt-image-2.5-flare", "gpt-image-2.5-sunburst")
 PRICE = {"1K": 0.015, "2K": 0.015, "4K": 0.02}  # USD per returned image, checked 2026-10-07
+USER_AGENT = "game-art-gpt-image-2/1.0"  # the default Python-urllib agent can be refused with a 403
 
 
 def tier(width: int, height: int) -> str:
@@ -92,6 +93,7 @@ def send(path: str, body: bytes, content_type: str) -> list:
     base_url = (os.environ.get("GPT_IMAGE_BASE_URL") or DEFAULT_BASE_URL).rstrip("/")
     request = urllib.request.Request(base_url + path, data=body, method="POST")
     request.add_header("Authorization", f"Bearer {api_key}")
+    request.add_header("User-Agent", USER_AGENT)
     request.add_header("Content-Type", content_type)
     try:
         # The response arrives only when every image is finished; 2K and 4K take longer.
