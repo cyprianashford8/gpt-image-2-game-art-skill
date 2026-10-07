@@ -1,8 +1,0 @@
-# GPT Image 2 — Argolink
-
-- Model: gpt-image-2
-- Intent: game-art image generation skill
-- Model page: https://argolink.io/gh-gpt-image-2-game-art-skill
-- API docs: https://argolink.io/gh-unified-api-docs
-- Examples: examples/request.sh, examples/client.py
-- Contract: docs/model-contract.md
